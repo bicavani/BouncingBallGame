@@ -12,8 +12,8 @@ let ballRadius = 10;
 let ballX = barX + barWidth/2;
 let ballY = barY - 10;
 let ballColor = "red";
-let ballSpeedX = 4;
-let ballSpeedY = -4;
+let ballSpeedX;
+let ballSpeedY;
 let interval;
 let timeoutOfInterval = 40;
 let arrStone = [];
@@ -23,7 +23,6 @@ let level = 10;
 let myGameArea = {
     canvas : document.createElement("canvas"),
     create : function () {
-        this.canvas.setAttribute("id", "canvas");
         this.canvas.width = gameArea_Width;
         this.canvas.height = gameArea_Height;
         this.context = this.canvas.getContext("2d");
@@ -42,8 +41,15 @@ let myGameArea = {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 };
+function setBallSpeed() {
+   let i = Math.floor(Math.random()*3);
+   let arrSpeed = [-5, -4, 4, 5];
+   ballSpeedX = arrSpeed[i];
+   ballSpeedY = -Math.abs(arrSpeed[i]);
+}
 
 function createGame() {
+    setBallSpeed();
     ball  = new Ball(ballX, ballY, ballRadius, ballColor, ballSpeedX, ballSpeedY);
     bar = new Bar(barX, barY, barWidth, barHeight, barColor );
     createMultiStones();
@@ -230,6 +236,7 @@ function insertStones() {
     }
     arrStone.unshift(arr);
 }
+
 
 
 
