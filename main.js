@@ -89,25 +89,40 @@ function drawMultiStones() {
         }
     }
 }
-function checkBallCollision() {
+function checkBallCollisionBorder() {
     if (ball.top <= 0) {
         ball.speedY = -ball.speedY;
-    }else if (ball.bottom >= myGameArea.canvas.height) {
+    }
+    if (ball.bottom >= myGameArea.canvas.height) {
         alert("GAME OVER");
         clearInterval(interval);
         level = 0;
         document.location.reload();
     }
-    if (ball.right > bar.x && ball.left < bar.x + bar.width && ball.bottom >= bar.y) {
+    if (ball.right >= myGameArea.canvas.width || ball.left <= 0) {
+        ball.speedX = -ball.speedX;
+    }
+}
+function checkBallCollisionBar() {
+    if (ball.bottom === bar.y && ball.right > bar.x && ball.left < bar.x + bar.width) {
         ball.speedY = -ball.speedY;
     }
-    else if (ball.right >= myGameArea.canvas.width || ball.left <= 0) {
+    else if ((ball.right === bar.x || ball.left === bar.x + bar.width) && ball.bottom === bar.y) {
         ball.speedX = -ball.speedX;
     }
-    if ((ball.right === bar.x || ball.left === bar.x + bar.width) &&
-        ball.bottom >= bar.y && ball.top <= bar.y + bar.height)
+    else if (ball.bottom > bar.y && ball.bottom <= bar.y + bar.height &&
+        ball.x >= bar.x && ball.x <= bar.x + bar.width && ball.speedY > 0) {
+        ball.speedY = -ball.speedY;
+    }
+    else if (ball.bottom > bar.y && ball.bottom <= bar.y + bar.height &&
+        ((ball.x < bar.x && bar.x - ball.x <= ball.radius) ||
+            (ball.x > bar.x + bar.width && ball.x - bar.x - bar.width <= ball.radius))) {
         ball.speedX = -ball.speedX;
-
+    }
+    else if (ball.bottom > bar.y + bar.height && ball.top <= bar.y + bar.height &&
+        (bar.x - ball.left <= ball.radius || ball.right - bar.x - bar.width <= ball.radius)){
+        ball.speedX = -ball.speedX;
+    }
 }
 function destroyStone() {
     for (let i = arrStone.length -1; i >= 0; i--) {
@@ -180,8 +195,9 @@ function moveBar() {
 function updateGameArea() {
     myGameArea.clear();
     ball.updatePos();
-    checkBallCollision();
     destroyStone();
+    checkBallCollisionBar();
+    checkBallCollisionBorder();
     ball.draw();
     bar.draw();
     drawMultiStones();
